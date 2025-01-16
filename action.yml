@@ -1,0 +1,10 @@
+name: "Sarif Annotator"
+runs:
+  using: docker
+  image: docker://docker.io/loremfoobar/sarif-annotator-action:v1
+branding:
+  author: LoremFooBar
+  icon: code
+  color: purple
+  name: Sarif Annotator
+  description: Create annotations from SARIF file
