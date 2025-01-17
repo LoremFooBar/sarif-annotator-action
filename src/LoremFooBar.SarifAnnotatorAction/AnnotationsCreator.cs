@@ -1,6 +1,7 @@
 ﻿using LoremFooBar.SarifAnnotatorAction.Model;
 using LoremFooBar.SarifAnnotatorAction.Utils;
 using Microsoft.CodeAnalysis.Sarif;
+using Serilog;
 
 namespace LoremFooBar.SarifAnnotatorAction;
 
@@ -22,15 +23,14 @@ public class AnnotationsCreator
         }
 
         Uri.TryCreate("file://" + cloneDir, UriKind.Absolute, out _cloneDirUri);
+        Log.Debug("Clone dir uri {Uri}", _cloneDirUri);
     }
 
     public IEnumerable<Annotation> CreateAnnotationsFromSarifResults(IReadOnlyList<ResultWithRun> results)
     {
         if (results.Count == 0) yield break;
 
-        for (int i = 0; i < results.Count; i++) {
-            var result = results[i].Result;
-            var run = results[i].Run;
+        foreach (var (run, result) in results) {
             var physicalLocation = result.Locations.FirstOrDefault()?.PhysicalLocation;
 
             if (physicalLocation is null) continue;
@@ -41,7 +41,6 @@ public class AnnotationsCreator
 
             var rule = result.GetRule(run);
             string details = result.Message.Text + (rule.HelpUri == null ? "" : "\n" + rule.HelpUri);
-            /*string relativePathPart = GetRelativePathPart();*/
             string pathRelativeToCloneDir = GetPathRelativeToCloneDir(physicalLocation.ArtifactLocation, run);
 
             yield return new Annotation
@@ -75,8 +74,12 @@ public class AnnotationsCreator
 
             if (!gotBaseLocation || baseLocation is null) return resultUri.ToString();
 
+            Log.Debug("Base location: {BaseLocationUri}", baseLocation.Uri);
+
             absoluteUri = new Uri(baseLocation.Uri, resultUri);
         }
+
+        Log.Debug("Absolute Uri: {AbsoluteUri}", absoluteUri);
 
         return _cloneDirUri.IsBaseOf(absoluteUri)
             ? _cloneDirUri.MakeRelativeUri(absoluteUri).ToString()

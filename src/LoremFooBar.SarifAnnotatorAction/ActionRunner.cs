@@ -52,6 +52,9 @@ public class ActionRunner
         var results = await GetFilteredResultsByDiff(sarif);
         var annotations = new AnnotationsCreator(_environmentInfo).CreateAnnotationsFromSarifResults(results).ToList();
 
+        Log.Debug("First 10 annotations created: {@Annotations}",
+            annotations.Count > 10 ? annotations[..10] : annotations);
+
         WriteAnnotationsToConsole(annotations);
 
         if (_actionOptions.FailWhenIssuesFound && annotations is { Count: > 0 })
