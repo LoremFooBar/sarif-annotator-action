@@ -9,10 +9,16 @@ Create annotations from SARIF file
   uses: LoremFooBar/sarif-annotator-action@v1
   env:
     SARIF_FILE_PATH: "inspect-code-results.sarif"
-    PULL_REQUEST_NUMBER: ${{ github.event.number }} # mandatory, used to filter sarif file by diff
-    GH_TOKEN: ${{ secrets.GITHUB_TOKEN }} # mandatory, used to make api call to get pr diff
-    FAIL_WHEN_ISSUES_FOUND: true # whether to fail when issues found (after filtering)
-    DEBUG: true # show debug logs
+    # mandatory, needed because GITHUB_WORKSPACE is different when running containerized action https://github.com/actions/runner/issues/2058
+    CLONE_DIR: ${{ github.workspace }}
+    # mandatory, used to filter sarif file by diff
+    PULL_REQUEST_NUMBER: ${{ github.event.number }}
+    # mandatory, used to make api call to get pr diff
+    GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    # whether to fail when issues found (after filtering). default `false`
+    FAIL_WHEN_ISSUES_FOUND: true
+    # show debug logs
+    DEBUG: true 
 ```
 
 ## License

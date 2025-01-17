@@ -18,7 +18,7 @@ public class ActionOptions
     /// <summary>
     /// Whether to fail current build step if any issues found.
     /// </summary>
-    public bool FailWhenIssuesFound { get; set; } = true;
+    public bool FailWhenIssuesFound { get; set; }
 
     /// <summary>
     /// The pull request number to annotate
