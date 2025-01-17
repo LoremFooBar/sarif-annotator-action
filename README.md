@@ -10,7 +10,7 @@ Create annotations from SARIF file
   env:
     SARIF_FILE_PATH: "inspect-code-results.sarif"
     # mandatory, needed because GITHUB_WORKSPACE is different when running containerized action https://github.com/actions/runner/issues/2058
-    CLONE_DIR: ${{ github.workspace }}
+    CLONE_DIR: $GITHUB_WORKSPACE
     # mandatory, used to filter sarif file by diff
     PULL_REQUEST_NUMBER: ${{ github.event.number }}
     # mandatory, used to make api call to get pr diff
