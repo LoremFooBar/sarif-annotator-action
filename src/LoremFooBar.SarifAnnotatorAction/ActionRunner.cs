@@ -117,7 +117,7 @@ public class ActionRunner
     private static void WriteAnnotationsToConsole(IEnumerable<Annotation> annotations)
     {
         var outputs = annotations.Select(a =>
-            $"::error file={a.Path},line={a.Line},endLine={a.Line},title={a.Summary}::{a.Details}"
+            $"::error file={a.Path},line={a.Line},endLine={a.Line},title={a.Summary}::{a.Details?.ReplaceLineEndings(" ")}"
         );
 
         foreach (string output in outputs) {
