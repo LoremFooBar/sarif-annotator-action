@@ -1,5 +1,6 @@
-﻿using System.Net.Http.Headers;
-using DiffPatch;
+﻿using System.Diagnostics;
+using System.Net.Http.Headers;
+using DiffPatchFixed;
 using LoremFooBar.SarifAnnotatorAction.Model.Diff;
 using LoremFooBar.SarifAnnotatorAction.Options;
 using LoremFooBar.SarifAnnotatorAction.Utils;
@@ -29,10 +30,10 @@ public class GithubApiClient(EnvironmentInfo environmentInfo, AuthenticationOpti
 
         var fileDiffs = DiffParserHelper.Parse(body, Environment.NewLine);
         var diffDictionary = fileDiffs
-            .Where(fd => !fd.Deleted)
+            .Where(fd => !fd.Deleted && !string.IsNullOrWhiteSpace(fd.To))
             .Select(fd => new
             {
-                fd.To,
+                To = fd.To ?? throw new UnreachableException("null `To` is filtered out"),
                 LineNumbers = fd.Chunks.SelectMany(chunk =>
                     chunk.Changes.Where(change => change.Add).Select(change => change.Index)).ToList(),
             })

@@ -5,13 +5,14 @@ ENV ProjectName=LoremFooBar.SarifAnnotatorAction
 WORKDIR /source
 
 COPY Directory.Build.props .
-COPY src/$ProjectName/$ProjectName.csproj .
+COPY src/$ProjectName/$ProjectName.csproj src/$ProjectName/$ProjectName.csproj
+COPY src/DiffPatchFixed/DiffPatchFixed.csproj src/DiffPatchFixed/DiffPatchFixed.csproj
 
-RUN dotnet restore
+RUN dotnet restore src/$ProjectName/$ProjectName.csproj
 
-COPY src/$ProjectName/. ./
+COPY src/ src/
 
-RUN dotnet publish -c Release -o /app
+RUN dotnet publish -c Release -o /app src/$ProjectName/$ProjectName.csproj
 
 # Label as GitHub action
 LABEL com.github.actions.name="Sarif Annotator"
