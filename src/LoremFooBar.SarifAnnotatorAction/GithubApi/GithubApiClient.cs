@@ -28,7 +28,7 @@ public class GithubApiClient(EnvironmentInfo environmentInfo, AuthenticationOpti
         if (!response.IsSuccessStatusCode)
             throw new RequestFailedException(response, body);
 
-        var fileDiffs = DiffParserHelper.Parse(body, Environment.NewLine);
+        var fileDiffs = DiffParserHelper.Parse(body);
         var diffDictionary = fileDiffs
             .Where(fd => !fd.Deleted && !string.IsNullOrWhiteSpace(fd.To))
             .Select(fd => new
