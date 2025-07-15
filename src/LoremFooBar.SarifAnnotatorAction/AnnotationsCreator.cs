@@ -43,15 +43,26 @@ public class AnnotationsCreator
             string details = result.Message.Text + (rule.HelpUri == null ? "" : "\n" + rule.HelpUri);
             string pathRelativeToCloneDir = GetPathRelativeToCloneDir(physicalLocation.ArtifactLocation, run);
 
-            yield return new Annotation
-            {
-                Path = pathRelativeToCloneDir,
-                Line = physicalLocation.Region.StartLine,
-                Summary = string.IsNullOrWhiteSpace(rule.ShortDescription?.Text)
-                    ? rule.FullDescription.Text
-                    : rule.ShortDescription?.Text,
-                Details = details,
-            };
+            Annotation? annotation;
+
+            try {
+                annotation = new Annotation
+                {
+                    Path = pathRelativeToCloneDir,
+                    Line = physicalLocation.Region.StartLine,
+                    Summary = string.IsNullOrWhiteSpace(rule.ShortDescription?.Text)
+                        ? rule.FullDescription.Text
+                        : rule.ShortDescription?.Text,
+                    Details = details,
+                };
+            }
+            catch (Exception ex) {
+                Log.Error(ex, "Error creating annotation for result {@Result}",
+                    new { physicalLocation, details, physicalLocation.Region?.StartLine });
+                annotation = null;
+            }
+
+            if (annotation != null) yield return annotation;
         }
     }
 
